@@ -1,0 +1,37 @@
+[project]
+name = "home-work-oop"
+version = "0.1.0"
+description = ""
+authors = [
+    { name = "Andrei Aleksevich" }
+]
+license = { text = "free" }
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.lint.dependencies]
+mypy = "^1.17.1"
+isort = "^6.0.1"
+black = "^25.1.0"
+
+[tool.pytest.ini_options]
+addopts = "--cov=scr --cov-report=html"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.1"
+flake8 = "^7.3.0"
+
+
+[tool.black]
+line-length = 119
+
+[tool.isort]
+line_length = 119
