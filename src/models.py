@@ -28,12 +28,7 @@ class Product:
     @classmethod
     def new_product(cls, product_data):
         """Класс-метод для создания продукта из словаря."""
-        return cls(
-            product_data["name"],
-            product_data["description"],
-            product_data["price"],
-            product_data["quantity"]
-        )
+        return cls(product_data["name"], product_data["description"], product_data["price"], product_data["quantity"])
 
     def __str__(self):
         return f"{self.name} - {self.__price}₽"
