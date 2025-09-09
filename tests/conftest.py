@@ -20,7 +20,7 @@ def product_a():
 @pytest.fixture
 def product_b():
     """Продукт Б для тестов."""
-    return Product("Товар Б", "Описание товара Б", 20.00, 3)
+    return Product("Товар Б", "Описание товара Б", 20.00, 10)
 
 
 @pytest.fixture
