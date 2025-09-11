@@ -31,10 +31,16 @@ class Product:
         return cls(product_data["name"], product_data["description"], product_data["price"], product_data["quantity"])
 
     def __str__(self):
-        return f"{self.name} - {self.__price}₽"
+        return f"{self.name}, {self.__price} руб. Остаток: {self.quantity} шт."
 
     def __repr__(self):
         return f"{self.name} - {self.__price}₽"
+
+    def __add__(self, other):
+        """Магический метод сложения. Возвращает сумму произведений цены на количество."""
+        if isinstance(other, Product):
+            return self.price * self.quantity + other.price * other.quantity
+        return NotImplemented
 
 
 class Category:
@@ -59,10 +65,15 @@ class Category:
         """Геттер для списка товаров в формате строки."""
         result = ""
         for product in self.__products:
-            result += f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n"
+            result += f"{str(product)}\n"
         return result
 
     def add_product(self, product):
         """Метод для добавления продукта в категорию."""
         self.__products.append(product)
         Category.product_count += 1
+
+    def __str__(self):
+        """Строковое представление категории."""
+        total_quantity = sum(product.quantity for product in self.__products)
+        return f"{self.name}, количество продуктов: {total_quantity} шт."

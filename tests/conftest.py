@@ -63,3 +63,12 @@ def expected_category_data():
         "category_count": 1,
         "product_count": 2,
     }
+
+
+@pytest.fixture
+def large_category():
+    """Категория с тремя товарами для тестирования подсчетов."""
+    product1 = Product("Товар 1", "Описание 1", 100.0, 5)
+    product2 = Product("Товар 2", "Описание 2", 200.0, 10)
+    product3 = Product("Товар 3", "Описание 3", 300.0, 15)
+    return Category("Тестовая категория", "Описание", [product1, product2, product3])
