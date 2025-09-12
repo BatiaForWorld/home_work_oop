@@ -74,7 +74,7 @@ def large_category():
     return Category("Тестовая категория", "Описание", [product1, product2, product3])
 
 
-# --- Фикстуры для наследников Product ---
+
 
 
 @pytest.fixture
