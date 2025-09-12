@@ -37,10 +37,16 @@ class Product:
         return f"{self.name} - {self.__price}₽"
 
     def __add__(self, other):
-        """Магический метод сложения. Возвращает сумму произведений цены на количество."""
-        if isinstance(other, Product):
-            return self.price * self.quantity + other.price * other.quantity
-        return NotImplemented
+        """Магический метод сложения. Возвращает сумму произведений цены на количество.
+
+        По условиям задания складывать можно только объекты одного и того же класса продуктов.
+        Если типы различаются — выбрасываем TypeError.
+        """
+        if not isinstance(other, Product):
+            return NotImplemented
+        if type(self) is not type(other):
+            raise TypeError("Нельзя складывать товары разных типов")
+        return self.price * self.quantity + other.price * other.quantity
 
 
 class Category:
@@ -69,7 +75,13 @@ class Category:
         return result
 
     def add_product(self, product):
-        """Метод для добавления продукта в категорию."""
+        """Метод для добавления продукта в категорию.
+
+        Разрешается добавлять только экземпляры Product или его наследников.
+        Иначе выбрасывается TypeError.
+        """
+        if not isinstance(product, Product):
+            raise TypeError("Можно добавлять только объекты Product или его наследников")
         self.__products.append(product)
         Category.product_count += 1
 
@@ -77,3 +89,24 @@ class Category:
         """Строковое представление категории."""
         total_quantity = sum(product.quantity for product in self.__products)
         return f"{self.name}, количество продуктов: {total_quantity} шт."
+
+
+class Smartphone(Product):
+    """Класс Смартфон — наследник Product."""
+
+    def __init__(self, name, description, price, quantity, efficiency, model, memory, color):
+        super().__init__(name, description, price, quantity)
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
+
+
+class LawnGrass(Product):
+    """Класс Трава газонная — наследник Product."""
+
+    def __init__(self, name, description, price, quantity, country, germination_period, color):
+        super().__init__(name, description, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
