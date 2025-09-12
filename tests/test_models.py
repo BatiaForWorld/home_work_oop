@@ -1,4 +1,4 @@
-from src.models import Category, Product
+from src.models import Category, LawnGrass, Product, Smartphone
 
 
 def test_product_initialization(product_a):
@@ -37,7 +37,7 @@ def test_category_initialization(category_electronics):
 
 def test_category_counters(category_electronics, category_books):
     """Проверка подсчета количества категорий и продуктов."""
-    # После создания двух категорий с 2 и 1 продуктами соответственно
+
     assert Category.category_count == 2
     assert Category.product_count == 3
 
@@ -65,9 +65,8 @@ def test_category_add_product(category_electronics, product_c):
     initial_count = Category.product_count
     category_electronics.add_product(product_c)
 
-    # Проверяем, что продукт добавился (геттер должен содержать новый продукт)
     assert "Товар В, 15.75 руб. Остаток: 8 шт." in category_electronics.products
-    # Проверяем, что счётчик увеличился
+
     assert Category.product_count == initial_count + 1
 
 
@@ -83,11 +82,9 @@ def test_category_products_property_optimized(category_electronics):
     """Тест оптимизированного геттера products с использованием str(product)."""
     products_str = category_electronics.products
 
-    # Проверяем, что строка содержит ожидаемые продукты в правильном формате
     assert "Товар А, 10.5 руб. Остаток: 5 шт." in products_str
     assert "Товар Б, 20.0 руб. Остаток: 10 шт." in products_str
 
-    # Проверяем, что каждая строка заканчивается переносом строки
     lines = products_str.strip().split("\n")
     assert len(lines) == 2
 
@@ -112,10 +109,9 @@ def test_product_new_product_classmethod():
 
 def test_product_price_property(product_a):
     """Тест геттера и сеттера для цены."""
-    # Тест геттера
+
     assert product_a.price == 10.5
 
-    # Тест сеттера с положительным значением
     product_a.price = 15.0
     assert product_a.price == 15.0
 
@@ -211,6 +207,52 @@ def test_product_add_different_combinations(product_a, product_b, product_c):
     assert product_b + product_c == 200.0 + 126.0
 
 
+def test_smartphone_initialization(smartphone_a):
+    assert isinstance(smartphone_a, Smartphone)
+    assert smartphone_a.model == "S23 Ultra"
+    assert smartphone_a.memory == 256
+    assert smartphone_a.color == "Серый"
+    assert smartphone_a.efficiency == 95.5
+
+
+def test_lawn_grass_initialization(lawn_grass_a):
+    assert isinstance(lawn_grass_a, LawnGrass)
+    assert lawn_grass_a.country == "Россия"
+    assert lawn_grass_a.germination_period == "7 дней"
+    assert lawn_grass_a.color == "Зеленый"
+
+
+def test_add_product_accepts_only_product_or_subclasses(category_smartphones):
+    extra = Smartphone("Xiaomi", "Note 11", 31000.0, 14, 90.3, "Note 11", 1024, "Синий")
+    category_smartphones.add_product(extra)
+    assert "Xiaomi, 31000.0 руб. Остаток: 14 шт." in category_smartphones.products
+
+    try:
+        category_smartphones.add_product("не продукт")
+        assert False, "Должна быть ошибка TypeError при добавлении не-продукта"
+    except TypeError:
+        pass
+
+
+def test_add_same_product_types_sum(smartphone_a, smartphone_b, lawn_grass_a, lawn_grass_b):
+    assert (
+        smartphone_a + smartphone_b
+        == smartphone_a.price * smartphone_a.quantity + smartphone_b.price * smartphone_b.quantity
+    )
+    assert (
+        lawn_grass_a + lawn_grass_b
+        == lawn_grass_a.price * lawn_grass_a.quantity + lawn_grass_b.price * lawn_grass_b.quantity
+    )
+
+
+def test_add_different_product_types_raises_type_error(smartphone_a, lawn_grass_a):
+    try:
+        _ = smartphone_a + lawn_grass_a
+        assert False, "Ожидалась ошибка TypeError при сложении разных типов продуктов"
+    except TypeError:
+        pass
+
+
 def test_product_add_with_non_product():
     """Тест сложения продукта с объектом другого типа."""
     product = Product("Тест", "Описание", 100.0, 2)
@@ -226,15 +268,12 @@ def test_product_add_returns_not_implemented():
     """Тест что метод __add__ возвращает NotImplemented для несовместимых типов."""
     product = Product("Тест", "Описание", 100.0, 2)
 
-    # Напрямую вызываем метод __add__ с числом (не Product)
     result = product.__add__(42)
     assert result is NotImplemented
 
-    # Также проверим со строкой
     result2 = product.__add__("строка")
     assert result2 is NotImplemented
 
-    # Проверяем с пользовательским классом, который не поддерживает сложение
     class CustomClass:
         def __radd__(self, other):
             return NotImplemented
