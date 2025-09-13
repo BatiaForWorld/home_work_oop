@@ -74,9 +74,6 @@ def large_category():
     return Category("Тестовая категория", "Описание", [product1, product2, product3])
 
 
-
-
-
 @pytest.fixture
 def smartphone_a():
     return Smartphone(

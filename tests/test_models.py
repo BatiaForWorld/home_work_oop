@@ -281,3 +281,24 @@ def test_product_add_returns_not_implemented():
     custom_obj = CustomClass()
     result3 = product.__add__(custom_obj)
     assert result3 is NotImplemented
+
+
+def test_product_multiple_inheritance_integration():
+    """Проверка интеграции множественного наследования в Product."""
+    from src.base_product import BaseProduct
+    from src.mixins import MixinLog
+
+    assert issubclass(Product, BaseProduct)
+    assert issubclass(Product, MixinLog)
+
+    assert Smartphone.__bases__ == (Product,)
+    assert LawnGrass.__bases__ == (Product,)
+
+    product = Product("Test", "Description", 100.0, 5)
+    smartphone = Smartphone("Test", "Test", 1000.0, 1, 95.0, "Model", 128, "Color")
+    grass = LawnGrass("Test", "Test", 50.0, 100, "Country", "5 days", "Green")
+
+    for obj in [product, smartphone, grass]:
+        assert isinstance(obj, Product)
+        assert isinstance(obj, BaseProduct)
+        assert isinstance(obj, MixinLog)

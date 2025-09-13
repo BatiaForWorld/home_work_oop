@@ -1,14 +1,20 @@
-class Product:
-    """Простая модель продукта."""
+try:
+    from .base_product import BaseProduct
+    from .mixins import MixinLog
+except ImportError:
+    from base_product import BaseProduct
+    from mixins import MixinLog
 
-    name: str
-    description: str
+
+class Product(MixinLog, BaseProduct):
+    """Простая модель продукта с множественным наследованием."""
+
     __price: float
     quantity: int
 
     def __init__(self, name, description, price, quantity):
-        self.name = name
-        self.description = description
+
+        super().__init__(name, description)
         self.__price = float(price)
         self.quantity = int(quantity)
 
@@ -37,11 +43,7 @@ class Product:
         return f"{self.name} - {self.__price}₽"
 
     def __add__(self, other):
-        """Магический метод сложения. Возвращает сумму произведений цены на количество.
-
-        По условиям задания складывать можно только объекты одного и того же класса продуктов.
-        Если типы различаются — выбрасываем TypeError.
-        """
+        """Магический метод сложения. Возвращает сумму произведений цены на количество."""
         if not isinstance(other, Product):
             return NotImplemented
         if type(self) is not type(other):
@@ -75,11 +77,7 @@ class Category:
         return result
 
     def add_product(self, product):
-        """Метод для добавления продукта в категорию.
-
-        Разрешается добавлять только экземпляры Product или его наследников.
-        Иначе выбрасывается TypeError.
-        """
+        """Метод для добавления продукта в категорию."""
         if not isinstance(product, Product):
             raise TypeError("Можно добавлять только объекты Product или его наследников")
         self.__products.append(product)
