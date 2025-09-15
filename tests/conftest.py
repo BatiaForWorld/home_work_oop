@@ -111,3 +111,24 @@ def category_smartphones(smartphone_a, smartphone_b):
 @pytest.fixture
 def category_grasses(lawn_grass_a, lawn_grass_b):
     return Category("Газонная трава", "Различные виды газонной травы", [lawn_grass_a, lawn_grass_b])
+
+
+@pytest.fixture
+def invalid_product_data_zero():
+    """Данные для создания продукта с нулевым количеством."""
+    return ("Бракованный товар", "Неверное количество", 1000.0, 0)
+
+
+@pytest.fixture
+def invalid_product_data_negative():
+    """Данные для создания продукта с отрицательным количеством."""
+    return ("Бракованный товар", "Отрицательное количество", 1000.0, -5)
+
+
+@pytest.fixture
+def category_for_average_price():
+    """Категория с тремя товарами для тестирования среднего ценника."""
+    product1 = Product("Товар 1", "Описание 1", 100.0, 5)
+    product2 = Product("Товар 2", "Описание 2", 200.0, 3)
+    product3 = Product("Товар 3", "Описание 3", 300.0, 2)
+    return Category("Тестовая категория", "Категория для теста", [product1, product2, product3])
