@@ -14,6 +14,9 @@ class Product(MixinLog, BaseProduct):
 
     def __init__(self, name, description, price, quantity):
 
+        if quantity <= 0:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен")
+
         super().__init__(name, description)
         self.__price = float(price)
         self.quantity = int(quantity)
@@ -87,6 +90,21 @@ class Category:
         """Строковое представление категории."""
         total_quantity = sum(product.quantity for product in self.__products)
         return f"{self.name}, количество продуктов: {total_quantity} шт."
+
+    def average_price(self):
+        """Подсчет среднего ценника всех товаров в категории."""
+        try:
+            if len(self.__products) == 0:
+                return 0
+
+            total_price = sum(product.price for product in self.__products)
+            return total_price / len(self.__products)
+        except ZeroDivisionError:
+            return 0
+
+    def middle_price(self):
+        """Метод для совместимости с существующим кодом."""
+        return self.average_price()
 
 
 class Smartphone(Product):

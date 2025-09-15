@@ -1,3 +1,5 @@
+import pytest
+
 from src.models import Category, LawnGrass, Product, Smartphone
 
 
@@ -208,6 +210,7 @@ def test_product_add_different_combinations(product_a, product_b, product_c):
 
 
 def test_smartphone_initialization(smartphone_a):
+    """Тест корректной инициализации объекта класса Smartphone."""
     assert isinstance(smartphone_a, Smartphone)
     assert smartphone_a.model == "S23 Ultra"
     assert smartphone_a.memory == 256
@@ -216,6 +219,7 @@ def test_smartphone_initialization(smartphone_a):
 
 
 def test_lawn_grass_initialization(lawn_grass_a):
+    """Тест корректной инициализации объекта класса LawnGrass."""
     assert isinstance(lawn_grass_a, LawnGrass)
     assert lawn_grass_a.country == "Россия"
     assert lawn_grass_a.germination_period == "7 дней"
@@ -223,6 +227,7 @@ def test_lawn_grass_initialization(lawn_grass_a):
 
 
 def test_add_product_accepts_only_product_or_subclasses(category_smartphones):
+    """Тест что метод add_product принимает только объекты Product или его наследников."""
     extra = Smartphone("Xiaomi", "Note 11", 31000.0, 14, 90.3, "Note 11", 1024, "Синий")
     category_smartphones.add_product(extra)
     assert "Xiaomi, 31000.0 руб. Остаток: 14 шт." in category_smartphones.products
@@ -235,6 +240,7 @@ def test_add_product_accepts_only_product_or_subclasses(category_smartphones):
 
 
 def test_add_same_product_types_sum(smartphone_a, smartphone_b, lawn_grass_a, lawn_grass_b):
+    """Тест сложения товаров одинакового типа."""
     assert (
         smartphone_a + smartphone_b
         == smartphone_a.price * smartphone_a.quantity + smartphone_b.price * smartphone_b.quantity
@@ -246,6 +252,7 @@ def test_add_same_product_types_sum(smartphone_a, smartphone_b, lawn_grass_a, la
 
 
 def test_add_different_product_types_raises_type_error(smartphone_a, lawn_grass_a):
+    """Тест что сложение товаров разных типов вызывает TypeError."""
     try:
         _ = smartphone_a + lawn_grass_a
         assert False, "Ожидалась ошибка TypeError при сложении разных типов продуктов"
@@ -302,3 +309,38 @@ def test_product_multiple_inheritance_integration():
         assert isinstance(obj, Product)
         assert isinstance(obj, BaseProduct)
         assert isinstance(obj, MixinLog)
+
+
+def test_product_zero_quantity_raises_value_error(invalid_product_data_zero):
+    """Тест проверки выброса ValueError при создании товара с нулевым количеством."""
+    with pytest.raises(ValueError, match="Товар с нулевым количеством не может быть добавлен"):
+        Product(*invalid_product_data_zero)
+
+
+def test_product_negative_quantity_raises_value_error(invalid_product_data_negative):
+    """Тест проверки выброса ValueError при создании товара с отрицательным количеством."""
+    with pytest.raises(ValueError, match="Товар с нулевым количеством не может быть добавлен"):
+        Product(*invalid_product_data_negative)
+
+
+def test_category_middle_price_with_products(category_for_average_price):
+    """Тест расчета среднего ценника для категории с товарами."""
+    expected_average = (100.0 + 200.0 + 300.0) / 3
+    assert category_for_average_price.middle_price() == expected_average
+
+
+def test_category_middle_price_empty_category(empty_category):
+    """Тест расчета среднего ценника для пустой категории."""
+    assert empty_category.middle_price() == 0
+
+
+def test_smartphone_zero_quantity_raises_value_error():
+    """Тест проверки выброса ValueError при создании смартфона с нулевым количеством."""
+    with pytest.raises(ValueError, match="Товар с нулевым количеством не может быть добавлен"):
+        Smartphone("iPhone", "Бракованный", 50000.0, 0, 95.0, "14", 256, "Black")
+
+
+def test_lawn_grass_zero_quantity_raises_value_error():
+    """Тест проверки выброса ValueError при создании газонной травы с нулевым количеством."""
+    with pytest.raises(ValueError, match="Товар с нулевым количеством не может быть добавлен"):
+        LawnGrass("Трава", "Бракованная", 500.0, 0, "Russia", "7 days", "Green")
